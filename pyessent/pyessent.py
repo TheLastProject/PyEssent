@@ -33,7 +33,7 @@ class PyEssent():
         def get_customer_details(get_contracts=False):
             r = SESSION.get(
                 API_BASE + 'customer/getCustomerDetails',
-                params={'GetContracts': get_contracts}
+                params={'GetContracts': str(get_contracts).lower()}
                 )
 
             # Throw exception if request fails
@@ -65,7 +65,7 @@ class PyEssent():
 
             r = SESSION.post(
                 API_BASE + 'customer/getMeterReadingHistory',
-                data=request_xml.format(ean, only_last_meter_reading, start_date, end_date))
+                data=request_xml.format(ean, str(only_last_meter_reading).lower(), start_date, end_date))
 
             # Throw exception if request fails
             r.raise_for_status()
