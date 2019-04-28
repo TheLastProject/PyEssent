@@ -20,7 +20,7 @@ class Customer():
 
         r = SESSION.get(
             API_BASE + 'customer/getBusinessPartnerDetails',
-            data=request_xml.format(agreement_id, only_active_contracts.lower())
+            data=request_xml.format(agreement_id, str(only_active_contracts).lower())
             )
 
         # Throw exception if request fails
@@ -97,8 +97,8 @@ class User():
         </AuthenticateUser>"""
 
         r = SESSION.post(
-            API_BASE + 'user/authenticateuser',
-            data=request_xml.format(username, password, get_contracts.lower()))
+            API_BASE + 'user/authenticateUser',
+            data=request_xml.format(username, password, str(get_contracts).lower()))
 
         # Throw exception if request fails
         r.raise_for_status()
