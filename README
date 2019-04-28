@@ -1,0 +1,23 @@
+# PyEssent
+
+A wrapper around the API of [Essent](https://essent.nl/), a Dutch energy provider.
+
+Written for use with Home Assistant.
+
+## How to use
+
+```
+from pyessent import PyEssent
+
+essent = PyEssent(username=username, password=password)
+
+essent.customer.get_customer_details()
+```
+
+You have to parse the output XML yourself, sorry.
+
+## Disclaimer
+This is not created or supported by Essent in any way.
+
+## License
+Apache2
