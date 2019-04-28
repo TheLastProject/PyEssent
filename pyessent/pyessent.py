@@ -2,6 +2,8 @@
 
 # Copyright (c) 2019 Sylvia van Os <sylvia@hackerchick.me>
 
+import xml.etree.ElementTree as ET
+
 import requests
 
 API_BASE = 'https://api.essent.nl/'
