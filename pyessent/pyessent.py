@@ -83,7 +83,7 @@ class PyEssent():
             # Throw exception if request fails
             r.raise_for_status()
 
-            return r
+            return ET.fromstring(r.text).findtext('Timestamp')
 
 
     class User():
