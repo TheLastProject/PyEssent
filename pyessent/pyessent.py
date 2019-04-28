@@ -112,3 +112,37 @@ class PyEssent():
 
     def __init__(self, username, password):
         PyEssent.User.authenticate_user(username, password)
+
+    def get_EANs(self):
+        EANs = []
+
+        # Get customer details
+        customer_details_request = PyEssent.Customer.get_customer_details()
+
+        # Parse our agreement ID
+        agreement_id = ET.fromstring(customer_details_request.text) \
+            .find('response') \
+            .find('Partner') \
+            .find('BusinessAgreements') \
+            .find('BusinessAgreement') \
+            .findtext('AgreementID')
+
+        # Get business partner details
+        business_partner_details_request = PyEssent.Customer.get_business_partner_details(agreement_id)
+
+        # Parse out our meters
+        contracts = ET.fromstring(business_partner_details_request.text) \
+            .find('response') \
+            .find('Partner') \
+            .find('BusinessAgreements') \
+            .find('BusinessAgreement') \
+            .find('Connections') \
+            .find('Connection') \
+            .find('Contracts') \
+            .findall('Contract')
+
+        for contract in contracts:
+            EANs.append(contract.findtext('ConnectEAN'))
+
+        return EANs
+
