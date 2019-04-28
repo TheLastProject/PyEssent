@@ -4,7 +4,7 @@
 
 import requests
 
-API_BASE = 'https://api.essent.nl/selfservice/'
+API_BASE = 'https://api.essent.nl/'
 SESSION = requests.session()
 
 
@@ -20,7 +20,7 @@ class PyEssent():
             </GetBusinessPartnerDetails>"""
 
             r = SESSION.get(
-                API_BASE + 'customer/getBusinessPartnerDetails',
+                API_BASE + 'selfservice/customer/getBusinessPartnerDetails',
                 data=request_xml.format(agreement_id, str(only_active_contracts).lower())
                 )
 
@@ -32,7 +32,7 @@ class PyEssent():
         @staticmethod
         def get_customer_details(get_contracts=False):
             r = SESSION.get(
-                API_BASE + 'customer/getCustomerDetails',
+                API_BASE + 'selfservice/customer/getCustomerDetails',
                 params={'GetContracts': str(get_contracts).lower()}
                 )
 
@@ -64,7 +64,7 @@ class PyEssent():
             </GetMeterReadingHistory>"""
 
             r = SESSION.post(
-                API_BASE + 'customer/getMeterReadingHistory',
+                API_BASE + 'selfservice/customer/getMeterReadingHistory',
                 data=request_xml.format(ean, str(only_last_meter_reading).lower(), start_date, end_date))
 
             # Throw exception if request fails
@@ -99,7 +99,7 @@ class PyEssent():
             </AuthenticateUser>"""
 
             r = SESSION.post(
-                API_BASE + 'user/authenticateUser',
+                API_BASE + 'selfservice/user/authenticateUser',
                 data=request_xml.format(username, password, str(get_contracts).lower()))
 
             # Throw exception if request fails
