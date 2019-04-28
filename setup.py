@@ -1,6 +1,6 @@
 import os
 import sys
-from setuptools import setup
+from setuptools import find_packages, setup
 from subprocess import check_output
 
 with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'requirements.txt')) as requirements_file:
@@ -18,5 +18,5 @@ setup(
     author='Sylvia van Os',
     author_email='sylvia@hackerchick.me',
     license='Apache2',
-    packages=setuptools.find_packages()
+    packages=find_packages()
 )
