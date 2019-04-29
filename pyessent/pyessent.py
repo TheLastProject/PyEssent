@@ -146,3 +146,37 @@ class PyEssent():
 
         return EANs
 
+    def read_meter(self, ean, only_last_meter_reading=False, start_date=None, end_date=None):
+        meter_info = {'type': None, 'values': {}}
+
+        meter_request = PyEssent.Customer.get_meter_reading_history(
+            ean, only_last_meter_reading=only_last_meter_reading,
+            start_date=start_date, end_date=end_date)
+
+        info_base = ET.fromstring(meter_request.text) \
+            .find('response') \
+            .find('Installations') \
+            .find('Installation')
+
+        # Set meter type now that it's known
+        meter_info['type'] = info_base.find('EnergyType').get('text')
+
+        # Retrieve the current status
+        registers = info_base.find('Meters') \
+            .find('Meter') \
+            .find('Registers') \
+            .findall('Register')
+
+        for register in registers:
+            direction = register.findtext('MeteringDirection')
+            if direction not in meter_info['values']:
+                meter_info['values'][direction] = {}
+
+            tariff = register.findtext('TariffType')
+            if tariff not in meter_info['values'][direction]:
+                meter_info['values'][direction][tariff] = {'unit': register.findtext('MeasureUnit'), 'records': {}}
+
+            for reading in register.find('MeterReadings').findall('MeterReading'):
+                meter_info['values'][direction][tariff]['records'][reading.findtext('ReadingDateTime')] = reading.findtext('ReadingResultValue')
+
+        return meter_info

@@ -10,8 +10,8 @@ Written for use with Home Assistant.
 from pyessent import PyEssent
 
 essent = PyEssent(username=username, password=password)
-
-essent.customer.get_customer_details()
+for ean in essent.get_EANs():
+    essent.read_meter(ean)
 ```
 
 You have to parse the output XML yourself, sorry.
