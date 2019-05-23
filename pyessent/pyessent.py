@@ -2,6 +2,7 @@
 
 # Copyright (c) 2019 Sylvia van Os <sylvia@hackerchick.me>
 
+import json
 import xml.etree.ElementTree as ET
 
 import requests
@@ -125,14 +126,17 @@ class PyEssent():
             r.raise_for_status()
 
             # Fill in login info
-            data = r.json()
-            data['callbacks'][0]['input']['value'] = username
-            data['callbacks'][1]['input']['value'] = password
+            data = {}
+            data['authId'] = r.json()['authId']
+            data['callbacks'] = r.json()['callbacks']
+            data['callbacks'][0]['input'][0]['value'] = username
+            data['callbacks'][1]['input'][0]['value'] = password
 
             # Actually login
             r = SESSION.post(
                 'https://sso.essent.be/am/json/authenticate',
-                data=data)
+                headers={'Content-Type': 'application/json'},
+                data=json.dumps(data))
 
             # Throw exception if request fails
             r.raise_for_status()
