@@ -141,8 +141,6 @@ class PyEssent():
             # Throw exception if request fails
             r.raise_for_status()
 
-            return r
-
     def get_EANs(self):
         EANs = []
 
