@@ -6,11 +6,15 @@ import xml.etree.ElementTree as ET
 
 import requests
 
-API_BASE = 'https://api.essent.nl/'
+API_BASES = {'NL': 'https://api.essent.nl/',
+             'BE': 'https://api.essent.be/'}
+
 SESSION = requests.session()
 
 
 class PyEssent():
+    API_BASE = None
+
     class Customer():
         @staticmethod
         def get_business_partner_details(agreement_id, only_active_contracts=True):
@@ -22,7 +26,7 @@ class PyEssent():
             </GetBusinessPartnerDetails>"""
 
             r = SESSION.get(
-                API_BASE + 'selfservice/customer/getBusinessPartnerDetails',
+                PyEssent.API_BASE + 'selfservice/customer/getBusinessPartnerDetails',
                 data=request_xml.format(agreement_id, str(only_active_contracts).lower())
                 )
 
@@ -34,7 +38,7 @@ class PyEssent():
         @staticmethod
         def get_customer_details(get_contracts=False):
             r = SESSION.get(
-                API_BASE + 'selfservice/customer/getCustomerDetails',
+                PyEssent.API_BASE + 'selfservice/customer/getCustomerDetails',
                 params={'GetContracts': str(get_contracts).lower()}
                 )
 
@@ -66,7 +70,7 @@ class PyEssent():
             </GetMeterReadingHistory>"""
 
             r = SESSION.post(
-                API_BASE + 'selfservice/customer/getMeterReadingHistory',
+                PyEssent.API_BASE + 'selfservice/customer/getMeterReadingHistory',
                 data=request_xml.format(ean, str(only_last_meter_reading).lower(), start_date, end_date))
 
             # Throw exception if request fails
@@ -74,19 +78,17 @@ class PyEssent():
 
             return r
 
-
     class Generic():
         @staticmethod
         def get_date_time():
             r = SESSION.get(
-                API_BASE + 'generic/getDateTime',
+                PyEssent.API_BASE + 'generic/getDateTime',
                 )
 
             # Throw exception if request fails
             r.raise_for_status()
 
             return ET.fromstring(r.text).findtext('Timestamp')
-
 
     class User():
         @staticmethod
@@ -101,7 +103,7 @@ class PyEssent():
             </AuthenticateUser>"""
 
             r = SESSION.post(
-                API_BASE + 'selfservice/user/authenticateUser',
+                PyEssent.API_BASE + 'selfservice/user/authenticateUser',
                 data=request_xml.format(username, password, str(get_contracts).lower()))
 
             # Throw exception if request fails
@@ -109,9 +111,33 @@ class PyEssent():
 
             return r
 
+    def __init__(self, username, password, country):
+        PyEssent.API_BASE = API_BASES[country]
 
-    def __init__(self, username, password):
-        PyEssent.User.authenticate_user(username, password)
+        if country == 'NL':
+            PyEssent.User.authenticate_user(username, password)
+        elif country == 'BE':
+            # Get login template
+            r = SESSION.post(
+                'https://sso.essent.be/am/json/authenticate')
+
+            # Throw exception if request fails
+            r.raise_for_status()
+
+            # Fill in login info
+            data = r.json()
+            data['callbacks'][0]['input']['value'] = username
+            data['callbacks'][1]['input']['value'] = password
+
+            # Actually login
+            r = SESSION.post(
+                'https://sso.essent.be/am/json/authenticate',
+                data=data)
+
+            # Throw exception if request fails
+            r.raise_for_status()
+
+            return r
 
     def get_EANs(self):
         EANs = []

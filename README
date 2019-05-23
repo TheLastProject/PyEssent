@@ -9,7 +9,13 @@ Written for use with Home Assistant.
 ```
 from pyessent import PyEssent
 
-essent = PyEssent(username=username, password=password)
+# For the Netherlands
+country = 'NL'
+
+# For Belgium
+country = 'BE'
+
+essent = PyEssent(username=username, password=password, country=country)
 for ean in essent.get_EANs():
     essent.read_meter(ean)
 ```
