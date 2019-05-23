@@ -141,6 +141,19 @@ class PyEssent():
             # Throw exception if request fails
             r.raise_for_status()
 
+            # Get user ID
+            r = SESSION.post(
+                'https://sso.essent.be/am/json/users?_action=idFromSession')
+
+            # Throw exception if request fails
+            r.raise_for_status()
+
+            username = r.json()['dn'].split(',')[0].split("=", 1)[0]
+
+            # Log into the mobile API with this user ID
+            PyEssent.User.authenticate_user(username, password)
+
+
     def get_EANs(self):
         EANs = []
 
