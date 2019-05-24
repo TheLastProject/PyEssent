@@ -141,6 +141,10 @@ class PyEssent():
             # Throw exception if request fails
             r.raise_for_status()
 
+            # Set cookies
+            SESSION.cookies['iwessent'] = r.json['tokenId']
+            SESSION.cookies['domain'] = 'essent.be'
+
             # Get user ID
             r = SESSION.post(
                 'https://sso.essent.be/am/json/users?_action=idFromSession')
