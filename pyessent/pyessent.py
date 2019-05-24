@@ -142,7 +142,7 @@ class PyEssent():
             r.raise_for_status()
 
             # Set cookies
-            SESSION.cookies['iwessent'] = r.json['tokenId']
+            SESSION.cookies['iwessent'] = r.json()['tokenId']
             SESSION.cookies['domain'] = 'essent.be'
 
             # Get user ID
