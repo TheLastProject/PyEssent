@@ -153,10 +153,13 @@ class PyEssent():
             ean, only_last_meter_reading=only_last_meter_reading,
             start_date=start_date, end_date=end_date)
 
-        info_base = ET.fromstring(meter_request.text) \
-            .find('response') \
-            .find('Installations') \
-            .find('Installation')
+        try:
+            info_base = ET.fromstring(meter_request.text) \
+                .find('response') \
+                .find('Installations') \
+                .find('Installation')
+        except AttributeError:
+            return None
 
         # Set meter type now that it's known
         meter_info['type'] = info_base.find('EnergyType').get('text')
