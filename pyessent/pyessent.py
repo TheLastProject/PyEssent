@@ -131,18 +131,18 @@ class PyEssent():
         business_partner_details_request = PyEssent.Customer.get_business_partner_details(agreement_id)
 
         # Parse out our meters
-        contracts = ET.fromstring(business_partner_details_request.text) \
+        connections = ET.fromstring(business_partner_details_request.text) \
             .find('response') \
             .find('Partner') \
             .find('BusinessAgreements') \
             .find('BusinessAgreement') \
             .find('Connections') \
-            .find('Connection') \
-            .find('Contracts') \
-            .findall('Contract')
-
-        for contract in contracts:
-            EANs.append(contract.findtext('ConnectEAN'))
+            .findall('Connection')
+        
+        for connection in connections:
+            contracts = connection.find('Contracts').findall('Contract')
+            for contract in contracts:
+                EANs.append(contract.findtext('ConnectEAN'))
 
         return EANs
 
