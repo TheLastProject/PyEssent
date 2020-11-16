@@ -12,7 +12,7 @@ with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'requirements
 
 setup(
     name='PyEssent',
-    version='0.13',
+    version='0.14',
     install_requires=requirements,
     description="A wrapper around Essent's API",
     author='Sylvia van Os',
